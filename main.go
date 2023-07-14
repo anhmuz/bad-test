@@ -5,7 +5,7 @@ import (
 	"unicode"
 )
 
-func firstUniqueLetter(input []rune) rune {
+func firstUniqueLetter(input []rune) *rune {
 	letterFreq := make(map[rune]int)
 
 	for _, r := range input {
@@ -14,19 +14,15 @@ func firstUniqueLetter(input []rune) rune {
 
 	for _, r := range input {
 		if letterFreq[r] == 1 {
-			return r
+			return &r
 		}
 	}
 
-	return 0
+	return nil
 }
 
-func uniqueLetter(text string) string {
-
-	var runes []rune
-	for _, r := range text {
-		runes = append(runes, r)
-	}
+func uniqueLetter(text string) *rune {
+	runes := ([]rune)(text)
 
 	var uniqueLetters []rune
 
@@ -34,24 +30,30 @@ func uniqueLetter(text string) string {
 	for start < len(runes) {
 		i := start
 
-		for i < len(runes) && unicode.IsLetter(runes[i]) {
+		for i < len(runes) && !unicode.IsSpace(runes[i]) {
 			i++
 		}
 
 		uniqueLetter := firstUniqueLetter(runes[start:i])
 
-		if uniqueLetter != 0 {
-			uniqueLetters = append(uniqueLetters, uniqueLetter)
+		if uniqueLetter != nil {
+			uniqueLetters = append(uniqueLetters, *uniqueLetter)
 		}
 
 		start = i + 1
 	}
 
-	return string(firstUniqueLetter(uniqueLetters))
+	return firstUniqueLetter(uniqueLetters)
 }
 
 func main() {
 	text := `C makes it easy for you to shoot yourself in the foot. C++ makes that harder, but when you do, it blows away your whole leg. (с) Bjarne Stroustrup`
 
-	fmt.Println(uniqueLetter(text))
+	r := uniqueLetter(text)
+
+	if r != nil {
+		fmt.Printf("%c", *r)
+	} else {
+		fmt.Println("not found")
+	}
 }
